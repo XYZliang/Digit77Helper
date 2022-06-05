@@ -8,7 +8,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="robots" content="index, follow">
 	<link rel="shortcut icon" type="image/png" href="https://www.digit77.com/lib/img/logo.svg">
-
+	<script>
+		var _hmt = _hmt || [];
+		(function () {
+			var hm = document.createElement("script");
+			hm.src = "https://hm.baidu.com/hm.js?b0e1cec309c3348683ad76967c210705";
+			var s = document.getElementsByTagName("script")[0];
+			s.parentNode.insertBefore(hm, s);
+		})();
+	</script>
 	<link rel="stylesheet" type="text/css"
 		href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="style.css?6151">
@@ -212,7 +220,8 @@
 									</label>
 								</div>
 								<div class="custom-switch custom-control">
-									<input class="custom-control-input" type="checkbox" id="tyautosave" name="tyautosave" />
+									<input class="custom-control-input" type="checkbox" id="tyautosave"
+										name="tyautosave" />
 									<label class="custom-control-label label-style" for="tyautosave">
 										开启自动转存到网盘
 									</label>
@@ -237,14 +246,16 @@
 									</label>
 								</div>
 								<div class="custom-switch custom-control">
-									<input class="custom-control-input" type="checkbox" id="alautosave" name="alautosave" />
+									<input class="custom-control-input" type="checkbox" id="alautosave"
+										name="alautosave" />
 									<label class="custom-control-label label-style" for="alautosave">
 										开启自动转存到网盘
 									</label>
 								</div>
-							</div> 
+							</div>
 							<a class="btn btn-rd btn-block btn-lg btn-coral-pink" id="save">保存设置</a>
 							<a class="btn btn-rd btn-block btn-lg btn-coral-pink" id="clean">清除缓存</a>
+							<a class="btn btn-rd btn-block btn-lg btn-coral-pink" id="about" href="https://download.kstore.space/download/2078/Digit77Helper/README.html">关于插件</a>
 							<div class="text-lg-center link" id="link">
 								<a href="https://github.com/XYZliang/Digit77Helper" target="_blank"><span
 										class="icon-md fab fa-github linklogo"></span></a><a padding-left="10px"
@@ -282,9 +293,9 @@
 
 	<script>
 		window.onload = function () {
-			// if(window.top==window){
-			// 	window.location = "https://www.digit77.com/"
-			// }
+			if(window.top==window){
+				window.location = "https://download.kstore.space/download/2078/Digit77Helper/README.html"
+			}
 			let inputs = $("#seeting input")
 			inputs.each(function () {
 				let id = $(this).attr("id")

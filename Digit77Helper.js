@@ -1,24 +1,26 @@
 // ==UserScript==
 // @name         Digit77 Helper
 // @namespace    cn.XYZliang.digit77Helper
-// @version      2.0
+// @version      2.3
 // @description  Digit77下载助手。自动复制提取码，跳过ouo.io的三秒等待时间！
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.slim.min.js
 // @license      GNU General Public License v3.0
 // @author       XYZliang
-// @homepage     https://
-// @match        https://www.digit77.com/*
-// @match        http://www.digit77.com/*
-// @match        https://ouo.press/*
-// @match        http://ouo.press/*
-// @match        https://ouo.io/*
-// @match        http://ouo.io/*
-// @match        https://app.mediatrack.cn/shares/*
-// @match        http://app.mediatrack.cn/shares/*
-// @match        https://download.kstore.space/download/2078/Digit77Helper/*
-// @match        https://*.sharepoint.com/*
-// @match        https://www.aliyundrive.com/*
-// @match        https://cloud.189.cn/*
+// @supportURL   https://qianniuossplus.jxufesoftware.club/README.html
+// @homepage     https://greasyfork.org/zh-CN/scripts/445961-digit77-helper
+// @updateURL    https://download.kstore.space/download/2078/Digit77Helper/Digit77Helper.js
+// @downloadURL  https://greasyfork.org/scripts/445961-digit77-helper/code/Digit77%20Helper.user.js
+// @match        *://www.digit77.com/*
+// @match        *://ouo.press/*
+// @match        *://ouo.io/*
+// @match        *://app.mediatrack.cn/shares/*
+// @match        *://app.mediatrack.cn/shares/*
+// @match        *://download.kstore.space/download/2078/Digit77Helper/*
+// @match        *://*.sharepoint.com/*
+// @match        *://www.aliyundrive.com/*
+// @match        *://cloud.189.cn/*
+// @match        *://*.jxufesoftware.club/*
+// @match        *://www.wulihub.com.cn/gc/JPKAvA/*
 // @icon         https://www.digit77.com/lib/img/logo.svg
 // @grant        unsafeWindow
 // @grant        GM_setClipboard
@@ -35,16 +37,17 @@
 /* globals jQuery, $ */
 
 // 用户设置
-let seeting = JSON.parse(GM_getValue("seeting"))
-if (seeting == null || seeting.length == 0) {
-    seeting == "{\"autofill\":true,\"ouo\":true,\"unzip\":true,\"fenmiaozhen\":true,\"baidu\":true,\"onedriver\":true,\"tianyi\":true,\"aliyun\":true,\"error\":true,\"fmzautofill\":true,\"fmzautodown\":true,\"fmzautofav\":false,\"fmzautosave\":false,\"bdautofill\":true,\"bdautodown\":true,\"bdautosave\":false,\"odautofill\":true,\"odautodown\":false,\"tyautofill\":true,\"tyautodown\":true,\"tyautosave\":false,\"alautofill\":true,\"alautodown\":true,\"alautosave\":false}"
+let seeting = GM_getValue("seeting")
+if (seeting == null || seeting.length == 0 || seeting == undefined || seeting) {
+    seeting = "{\"autofill\":true,\"ouo\":true,\"unzip\":true,\"fenmiaozhen\":true,\"baidu\":true,\"onedriver\":true,\"tianyi\":true,\"aliyun\":true,\"error\":true,\"fmzautofill\":true,\"fmzautodown\":true,\"fmzautofav\":false,\"fmzautosave\":false,\"bdautofill\":true,\"bdautodown\":true,\"bdautosave\":false,\"odautofill\":true,\"odautodown\":false,\"tyautofill\":true,\"tyautodown\":true,\"tyautosave\":false,\"alautofill\":true,\"alautodown\":true,\"alautosave\":false}"
     GM_setValue("seeting", seeting)
 }
+seeting = JSON.parse(seeting)
 let values = GM_listValues()
 if (values.length > 200) {
-    for (let i = 0; i < datas.length; i++) {
-        if (datas[i] != "seeting") {
-            GM_deleteValue(datas[i])
+    for (let i = 0; i < values.length; i++) {
+        if (values[i] != "seeting") {
+            GM_deleteValue(values[i])
         }
     }
     consoleLog("已自动清除缓存！")
@@ -77,32 +80,6 @@ if (url == "www.digit77.com" && seeting.autofill) {
             '</details>'
         frontElement.insertAdjacentHTML('afterend', insertHtml);
     }
-} else if (url == "download.kstore.space") {
-    consoleLog("进入设置页面！")
-    document.getElementById("save").addEventListener('click', function () {
-        let data = sumbit()
-        GM_setValue("seeting", data);
-        GM_notification("设置保存成功！", "Digit77 Helper")
-    })
-    document.getElementById("clean").addEventListener('click', function () {
-        let datas = GM_listValues()
-        // datas.array.forEach(element => {
-        //     if (element != "seeting")
-        //         GM_deleteValue(element)
-        // });
-        for (let i = 0; i < datas.length; i++) {
-            if (datas[i] != "seeting") {
-                GM_deleteValue(datas[i])
-            }
-        }
-        GM_notification("设置清除成功！", "Digit77 Helper")
-    })
-    let inputs = $("#seeting input")
-    inputs.each(function () {
-        let key = this.id
-        this.checked = seeting[key]
-    })
-    updateForm()
 } else if (url.indexOf("ouo") != -1 && seeting.ouo) {
     consoleLog("正在跳过ouo")
     $(document).ready(function () {
@@ -178,12 +155,13 @@ if (url == "www.digit77.com" && seeting.autofill) {
             if (seeting.fmzautodown) {
                 fun[2].click()
                 let time1 = setInterval(function () {
-                    let downFun = document.getElementsByClassName("MuiButtonBase-root MuiButton-root MuiButton-contained jss167 MuiButton-containedPrimary")
+                    let downFun = $(":contains(确定)")
                     if (downFun.length > 0) {
                         consoleLog("检测到下载框")
                         clearInterval(time1)
                         setTimeout(function () {
-                            downFun[0].click()
+                            downFun[downFun.length -1].click()
+                            copyUnzipPwd()
                         }, 500)
                     }
                 }, 333)
@@ -214,6 +192,7 @@ if (url == "www.digit77.com" && seeting.autofill) {
                     clearInterval(time)
                     setTimeout(function () {
                         downFun[0].click()
+                        copyUnzipPwd()
                     }, 333)
                 }
             }, 333)
@@ -235,6 +214,7 @@ if (url == "www.digit77.com" && seeting.autofill) {
                                 clearInterval(time)
                                 setTimeout(function () {
                                     downFun[downFun.length - 1].click()
+                                    copyUnzipPwd()
                                 }, 333)
                             }
                         }, 333)
@@ -316,6 +296,30 @@ if (url == "www.digit77.com" && seeting.autofill) {
             }, 1000)
         }
     }, 333)
+} else {
+    if ($(":contains(Helper设置)").length > 5) {
+        consoleLog("进入设置页面！")
+        document.getElementById("save").addEventListener('click', function () {
+            let data = sumbit()
+            GM_setValue("seeting", data);
+            GM_notification("设置保存成功！", "Digit77 Helper")
+        })
+        document.getElementById("clean").addEventListener('click', function () {
+            let datas = GM_listValues()
+            for (let i = 0; i < datas.length; i++) {
+                if (datas[i] != "seeting") {
+                    GM_deleteValue(datas[i])
+                }
+            }
+            GM_notification("设置清除成功！", "Digit77 Helper")
+        })
+        let inputs = $("#seeting input")
+        inputs.each(function () {
+            let key = this.id
+            this.checked = seeting[key]
+        })
+        updateForm()
+    }
 }
 
 function failedToGetJumpAddress(pwd) {
@@ -388,6 +392,10 @@ function updateForm(notFirst = true) {
     })
 }
 
+function copyUnzipPwd(){
+    GM.GM_setClipboard("digit77.com")
+}
+//  以下代码修改自 网盘智能识别助手
 let util = {
     clog(c) {
         console.group('[网盘智能识别助手]');
